@@ -1,0 +1,64 @@
+services:
+  ubuntu-vscode:
+    build:
+      context: .
+      dockerfile: dockerfile
+      args:
+        - APT_GET_PACKAGES=${APT_GET_PACKAGES:-git wget}
+        - POSTGRES_VERSION=${POSTGRES_VERSION}
+        - REPOSITORY_OWNER_UID=${REPOSITORY_OWNER_UID}
+        - REPOSITORY_OWNER_UNAME=${REPOSITORY_OWNER_UNAME}
+        - VSCODE_DIRECT_DOWNLOAD_URL=${VSCODE_DIRECT_DOWNLOAD_URL}
+        - VSCODE_PORT=${VSCODE_PORT:-8000}
+        - WKHTMLTOPDF_DIRECT_DOWNLOAD_URL=${WKHTMLTOPDF_DIRECT_DOWNLOAD_URL}
+    environment:
+      - APT_GET_PACKAGES
+      - DONT_PROMPT_WSL_INSTALL=1
+      - POSTGRES_VERSION
+      - REPOSITORY_OWNER_UID
+      - REPOSITORY_OWNER_UNAME
+      - SERVICE_NAME
+      - VSCODE_DIRECT_DOWNLOAD_URL
+      - VSCODE_PORT
+      - WKHTMLTOPDF_DIRECT_DOWNLOAD_URL
+    env_file:
+      - .env
+    image: ${SERVICE_NAME}:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: "host"
+    restart: always
+    volumes:
+      - ./data/vscode_data:/home/$REPOSITORY_OWNER_UNAME
+  
+  postgresql:
+    image: postgres:${POSTGRES_VERSION}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_PORT
+      - POSTGRES_UID
+      - POSTGRES_GID
+    env_file:
+      - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - postgres
+    ports:
+      - ${POSTGRES_PORT}:5432
+    restart: always
+    # user: root
+    volumes:
+      - ./data/postgres_data:/var/lib/postgresql/data
+      # - ./init_postgres.sh:/docker-entrypoint-initdb.d/init_postgres.sh
+
+networks:
+  postgres:
+    driver: bridge
