@@ -4,12 +4,17 @@ ARG APT_GET_PACKAGES
 ARG POSTGRES_VERSION
 ARG REPOSITORY_OWNER_UID
 ARG REPOSITORY_OWNER_UNAME
+ARG TIMEZONE
 ARG VSCODE_DIRECT_DOWNLOAD_URL
 ARG VSCODE_PORT
 ARG WKHTMLTOPDF_DIRECT_DOWNLOAD_URL
 
+ENV TIMEZONE=${TIMEZONE}
+
+RUN ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime && echo $TIMEZONE > /etc/timezone
+
 RUN apt update && \
-    apt install -y $APT_GET_PACKAGES sudo apt-transport-https gpg cabextract ssl-cert git wget software-properties-common build-essential tmux fontconfig vim; \
+    apt install -y $APT_GET_PACKAGES sudo tzdata apt-transport-https gpg cabextract ssl-cert git wget software-properties-common build-essential tmux fontconfig vim; \
     apt install -y -f
 
 RUN if [ -n "$WKHTMLTOPDF_DIRECT_DOWNLOAD_URL"]; then \

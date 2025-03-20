@@ -8,6 +8,7 @@ services:
         - POSTGRES_VERSION=${POSTGRES_VERSION}
         - REPOSITORY_OWNER_UID=${REPOSITORY_OWNER_UID}
         - REPOSITORY_OWNER_UNAME=${REPOSITORY_OWNER_UNAME}
+        - TIMEZONE=${TIMEZONE:-UTC}
         - VSCODE_DIRECT_DOWNLOAD_URL=${VSCODE_DIRECT_DOWNLOAD_URL}
         - VSCODE_PORT=${VSCODE_PORT:-8000}
         - WKHTMLTOPDF_DIRECT_DOWNLOAD_URL=${WKHTMLTOPDF_DIRECT_DOWNLOAD_URL}
@@ -18,6 +19,7 @@ services:
       - REPOSITORY_OWNER_UID
       - REPOSITORY_OWNER_UNAME
       - SERVICE_NAME
+      - TIMEZONE
       - VSCODE_DIRECT_DOWNLOAD_URL
       - VSCODE_PORT
       - WKHTMLTOPDF_DIRECT_DOWNLOAD_URL
@@ -33,7 +35,7 @@ services:
     restart: always
     volumes:
       - ./data/vscode_data:/home/$REPOSITORY_OWNER_UNAME
-  
+
   postgresql:
     image: postgres:${POSTGRES_VERSION}
     environment:
