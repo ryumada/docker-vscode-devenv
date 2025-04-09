@@ -76,4 +76,4 @@ USER ${REPOSITORY_OWNER_UNAME}
 
 WORKDIR /home/$REPOSITORY_OWNER_UNAME
 
-CMD ["/bin/bash", "-c", "code serve-web --port \"$VSCODE_PORT\" > /home/$REPOSITORY_OWNER_UNAME/vscode.log"]
+CMD ["/bin/bash", "-c", "code serve-web --without-connection-token --port \"$VSCODE_PORT\" > /home/$REPOSITORY_OWNER_UNAME/vscode.log"]
